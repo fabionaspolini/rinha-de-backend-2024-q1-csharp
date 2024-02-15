@@ -1,0 +1,21 @@
+@RinhaBackend_2024_q1_HostAddress = http://localhost:5200
+
+GET {{RinhaBackend_2024_q1_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+POST {{RinhaBackend_2024_q1_HostAddress}}/clientes/10/transacoes
+Content-Type: application/json
+Accept: application/json
+
+{
+    "valor": 1000000,
+    "tipo" : "d",
+    "descricao" : "teste"
+}
+
+###
+
+GET {{RinhaBackend_2024_q1_HostAddress}}/clientes/1/extrato
+Accept: application/json
