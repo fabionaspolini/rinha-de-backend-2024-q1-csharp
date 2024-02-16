@@ -56,8 +56,12 @@ async Task<IResult> HandleGetExtrato(HttpContext context, int id,
     var saldoAtualTask = ApiQueries.GetSaldoClienteAsync(conn, id);
     var extratoTask = ApiQueries.GetExtratoAsync(conn2, id);
 
+    var saldoAtual = await saldoAtualTask;
+    if (saldoAtual == null)
+        return Results.NotFound(new ErrorResponse("Cliente inválido."));
+
     return Results.Ok(new ExtratoResponse(
-        Saldo: await saldoAtualTask,
+        Saldo: saldoAtual,
         UltimasTransacoes: await extratoTask));
 }
 

@@ -15,6 +15,11 @@ public record CriarTransacaoResult(
     int? Saldo,
     int? Limite);
 
+public static class DatabaseFunctions
+{
+
+}
+
 public static class ModelsExtensions
 {
     public static CriarTransacaoResult ToDto(this IDataReader reader) =>

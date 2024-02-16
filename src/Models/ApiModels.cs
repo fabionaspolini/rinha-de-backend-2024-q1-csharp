@@ -1,7 +1,5 @@
-using System.Data;
 using System.Data.Common;
 using Dapper;
-using Npgsql;
 
 [module: DapperAot]
 
@@ -24,8 +22,8 @@ public record class ErrorResponse(string? Message);
 
 public static class ApiQueries
 {
-    public static Task<SaldoExtratoModel> GetSaldoClienteAsync(DbConnection conn, int clienteId) =>
-        conn.QueryFirstAsync<SaldoExtratoModel>(
+    public static Task<SaldoExtratoModel?> GetSaldoClienteAsync(DbConnection conn, int clienteId) =>
+        conn.QueryFirstOrDefaultAsync<SaldoExtratoModel>(
             @"select saldo as total, limite from cliente where id = @id", new { id = clienteId });
 
     /*public static async Task<SaldoExtratoModel?> GetSaldoClienteNativeAsync(DbConnection conn, int clienteId)
