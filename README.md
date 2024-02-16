@@ -23,6 +23,8 @@ docker run --rm \
     -e "ConnectionStrings__Rinha=Server=postgres-16;Port=5432;Database=rinha-de-backend-2024-q1;User Id=postgres;Password=123456;" \
     fabionaspolini/rinha-backend-2024-q1-aot-dapper:async
 
+docker push fabionaspolini/rinha-backend-2024-q1-aot-dapper --all-tags
+
 docker run --rm -it --name rinha -p 9999:9999 fabionaspolini/rinha-backend-2024-q1-aot-dapper:async bash
 ```
 
