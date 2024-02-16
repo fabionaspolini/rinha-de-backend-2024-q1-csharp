@@ -2,7 +2,7 @@ namespace RinhaBackend_2024_q1.Domain;
 
 public static class Constants
 {
-    public static readonly string[] TiposTrasações = ["c", "d"];
+    public static readonly string[] TiposTrasacoes = ["c", "d"];
 }
 
 public enum CriarTransacaoResultCode
