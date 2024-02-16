@@ -1,10 +1,11 @@
-using System.Data;
 using System.Data.Common;
 using System.Text.Json.Serialization;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RinhaBackend_2024_q1.Models;
+
+[module: DapperAot]
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:Rinha");
@@ -19,7 +20,9 @@ builder.Services.AddKeyedScoped<DbConnection>("conn2", (services, key) => new Np
 var app = builder.Build();
 
 app.MapPost("/clientes/{id}/transacoes", HandlePostTransacoesAsync);
-app.MapGet("/clientes/{id}/extrato", HandleGetExtrato);
+app.MapGet("/clientes/{id}/extrato", HandleGetExtratoAsync);
+
+app.Run();
 
 async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
 {
@@ -28,19 +31,7 @@ async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [From
     if (!Constants.TiposTrasações.Contains(request.Tipo))
         return Results.UnprocessableEntity(new ErrorResponse("Tipo de transalção inválida."));
 
-    if (conn.State == ConnectionState.Closed)
-        await conn.OpenAsync();
-    using var cmd = conn.CreateCommand();
-    cmd.CommandText = $"select * from criar_transacao(@cliente_id, @tipo, @valor, @descricao)";
-    cmd.AddParameter("@cliente_id", id);
-    cmd.AddParameter("@tipo", request.Tipo);
-    cmd.AddParameter("@valor", request.Valor);
-    cmd.AddParameter("@descricao", request.Descricao);
-    using var reader = await cmd.ExecuteReaderAsync();
-    if (!reader.Read())
-        return Results.UnprocessableEntity();
-
-    var result = reader.ToDto()!;
+    var result = await conn.CriarTransacaoAsync(id, request.Tipo, request.Valor, request.Descricao);
     return result.Code switch
     {
         CriarTransacaoResultCode.Ok => Results.Ok(new TransacaoPostResponse(result.Limite!.Value, result.Saldo!.Value)),
@@ -49,12 +40,12 @@ async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [From
     };
 }
 
-async Task<IResult> HandleGetExtrato(HttpContext context, int id, 
+async Task<IResult> HandleGetExtratoAsync(HttpContext context, int id,
     [FromServices] DbConnection conn,
     [FromKeyedServices("conn2")] DbConnection conn2)
 {
-    var saldoAtualTask = ApiQueries.GetSaldoClienteAsync(conn, id);
-    var extratoTask = ApiQueries.GetExtratoAsync(conn2, id);
+    var saldoAtualTask = conn.GetSaldoClienteAsync(id);
+    var extratoTask = conn2.GetExtratoAsync(id);
 
     var saldoAtual = await saldoAtualTask;
     if (saldoAtual == null)
@@ -65,16 +56,11 @@ async Task<IResult> HandleGetExtrato(HttpContext context, int id,
         UltimasTransacoes: await extratoTask));
 }
 
-app.Run();
-
-public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
-
-[JsonSerializable(typeof(Todo[]))]
+// Otimização para serializador JSON AOT
 [JsonSerializable(typeof(TransacaoPostRequest))]
 [JsonSerializable(typeof(TransacaoPostResponse))]
 [JsonSerializable(typeof(ExtratoResponse))]
 [JsonSerializable(typeof(ErrorResponse))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
-
 }
