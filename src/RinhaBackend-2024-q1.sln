@@ -5,6 +5,25 @@ VisualStudioVersion = 17.9.34607.119
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RinhaBackend-2024-q1", "RinhaBackend-2024-q1.csproj", "{CC559865-F053-45D9-AE8E-3EFA7E37ECD9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solutions Items", "Solutions Items", "{B4CC04F8-C617-4B0D-949F-D1A3A0D86B61}"
+	ProjectSection(SolutionItems) = preProject
+		..\.dockerignore = ..\.dockerignore
+		..\.gitignore = ..\.gitignore
+		..\docker-compose.yml = ..\docker-compose.yml
+		..\Dockerfile = ..\Dockerfile
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "db", "db", "{8732759B-144B-448D-B3AB-10ADB842263B}"
+	ProjectSection(SolutionItems) = preProject
+		..\db\init.sql = ..\db\init.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nginx", "nginx", "{CBD9B8AF-1B5A-407C-92B6-5D43F4B7C6F7}"
+	ProjectSection(SolutionItems) = preProject
+		..\nginx\nginx.conf = ..\nginx\nginx.conf
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

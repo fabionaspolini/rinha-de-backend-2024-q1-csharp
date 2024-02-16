@@ -48,6 +48,8 @@ async Task<IResult> HandleGetExtratoAsync(HttpContext context, int id,
     var saldoAtualTask = conn.GetSaldoClienteAsync(id);
     var extratoTask = conn2.GetExtratoAsync(id);
 
+    //await Task.WhenAll(saldoAtualTask, saldoAtualTask2, saldoAtualTask3, extratoTask);
+
     var saldoAtual = await saldoAtualTask;
     if (saldoAtual == null)
         return Results.NotFound(new ErrorResponse("Cliente inválido."));
