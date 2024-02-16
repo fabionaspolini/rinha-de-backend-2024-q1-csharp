@@ -30,7 +30,7 @@ async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [From
     if (string.IsNullOrEmpty(request.Descricao) || request.Descricao.Length > 10)
         return Results.UnprocessableEntity(new ErrorResponse("Descrição deve ter entre 1 e 10 caracteres."));
     if (!Constants.TiposTrasações.Contains(request.Tipo))
-        return Results.UnprocessableEntity(new ErrorResponse("Tipo de transalção inválida."));
+        return Results.UnprocessableEntity(new ErrorResponse("Tipo de transação inválida."));
 
     var result = await conn.InserirTransacaoAsync(id, request.Tipo, request.Valor, request.Descricao);
     return result.Code switch
