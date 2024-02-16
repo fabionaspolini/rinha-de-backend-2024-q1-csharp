@@ -6,8 +6,11 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends clang zlib1g-dev
 
 WORKDIR /app
-COPY . ./
+COPY ./src/RinhaBackend-2024-q1.csproj ./src/
+COPY ./src/RinhaBackend-2024-q1.sln ./src/
 RUN dotnet restore src -r linux-x64
+
+COPY . ./
 RUN dotnet publish src/RinhaBackend-2024-q1.csproj \
     -c Release \
     -r linux-x64 \
@@ -20,5 +23,4 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:8.0
 ENV ASPNETCORE_URLS http://*:9999
 WORKDIR /app
 COPY --from=build-env /app/out .
-RUN ls -la
 ENTRYPOINT ["./RinhaBackend-2024-q1"]
