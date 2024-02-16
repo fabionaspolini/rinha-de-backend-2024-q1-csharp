@@ -1,6 +1,4 @@
-using Npgsql;
 using System.Data;
-using System.Data.Common;
 
 namespace RinhaBackend_2024_q1.Models;
 
