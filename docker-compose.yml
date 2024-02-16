@@ -9,7 +9,7 @@ services:
     image: fabionaspolini/rinha-backend-2024-q1
     hostname: api01
     environment:
-      - ConnectionStrings__Rinha=Server=db;Port=5432;Database=rinha;User Id=rinha;Password=rinha;
+      - ConnectionStrings__Rinha=Server=db;Port=5432;Database=rinha;User Id=rinha;Password=rinha;Maximum Pool Size=3500;Minimum Pool Size=15;Application Name=rinha;
     ports:
       - "5201:9999"
     depends_on:
