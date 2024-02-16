@@ -1,6 +1,8 @@
 using System.Data.Common;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dapper;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RinhaBackend_2024_q1.ApiModels;
@@ -13,19 +15,34 @@ var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower;
     options.SerializerOptions.TypeInfoResolverChain.Insert(0, AppJsonSerializerContext.Default);
 });
 builder.Services.AddScoped<DbConnection>(services => new NpgsqlConnection(connectionString));
 builder.Services.AddKeyedScoped<DbConnection>("conn2", (services, key) => new NpgsqlConnection(connectionString));
 
+builder.Services.AddProblemDetails();
+builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true); // Para executar exeption handler em ambiente produtivo
+
+
 var app = builder.Build();
 
 app.MapPost("/clientes/{id}/transacoes", HandlePostTransacoesAsync);
 app.MapGet("/clientes/{id}/extrato", HandleGetExtratoAsync);
+app.MapGet("/exception", context => throw new Exception("Teste exception."));
 
 app.UseExceptionHandler(exceptionHandlerApp =>
-    exceptionHandlerApp.Run(async context => 
-        await Results.UnprocessableEntity().ExecuteAsync(context)));
+    exceptionHandlerApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>();
+        var title = exception?.Error.Message;
+#if DEBUG
+        var details = exception?.Error.ToString();
+#else
+        string? details = null; 
+#endif
+        await Results.Problem(statusCode: 422, detail: details, title: title).ExecuteAsync(context);
+    }));
 
 app.Run();
 
@@ -51,8 +68,6 @@ async Task<IResult> HandleGetExtratoAsync(HttpContext context, int id,
 {
     var saldoAtualTask = conn.GetSaldoClienteAsync(id);
     var extratoTask = conn2.GetExtratoAsync(id);
-
-    //await Task.WhenAll(saldoAtualTask, saldoAtualTask2, saldoAtualTask3, extratoTask);
 
     var saldoAtual = await saldoAtualTask;
     if (saldoAtual == null)
