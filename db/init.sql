@@ -8,17 +8,17 @@ create unlogged table transacao (
     cliente_id integer not null,
     tipo char(1) not null,
     valor integer not null,
-    realizada_em timestamp not null,
+    realizada_em timestamptz not null,
     descricao varchar(10) not null);
    
 create index ix_transacao_cliente_data on transacao(cliente_id, realizada_em desc);
 
 insert into cliente(id, limite, saldo) values
-(1, -100000, 0),
-(2, -80000, 0),
-(3, -1000000, 0),
-(4, -10000000, 0),
-(5, -500000, 0);
+(1, 100000, 0),
+(2, 80000, 0),
+(3, 1000000, 0),
+(4, 10000000, 0),
+(5, 500000, 0);
 
 create type inserir_transacao_result as (
 	result_code int,
@@ -56,7 +56,7 @@ begin
 		update cliente
 		set saldo = saldo - valor
 		where id = cliente_id
-	      and saldo - valor >= limite
+	      and saldo - valor + limite >= 0 
 	    returning *
 	   	into cli;
 	   
