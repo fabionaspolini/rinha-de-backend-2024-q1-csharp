@@ -15,7 +15,7 @@ RUN dotnet publish src/RinhaBackend-2024-q1.csproj \
     --no-restore
 
 # Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/runtime-deps:8.0
 ENV ASPNETCORE_URLS http://*:9999
 WORKDIR /app
 COPY --from=build-env /app/out .
