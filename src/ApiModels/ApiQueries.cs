@@ -10,7 +10,8 @@ public static class ApiQueries
         const string sql =
         """
             select saldo as total, limite
-            from cliente where id = @id
+            from cliente
+            where id = @id
         """;
         return conn.QueryFirstOrDefaultAsync<SaldoExtratoModel>(sql, new { id = clienteId });
     }
