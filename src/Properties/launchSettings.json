@@ -6,9 +6,10 @@
       "dotnetRunMessages": true,
       "launchBrowser": false,
       "launchUrl": "todos",
-      "applicationUrl": "http://localhost:5200",
+      "applicationUrl": "http://localhost:9999",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "http://*:9999"
       }
     }
   }

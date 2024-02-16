@@ -18,8 +18,7 @@ docker run --rm \
     --name rinha \
     --network postgres \
     -p 9999:9999 \
-    -p 5200:5200 \
-    -e "ASPNETCORE_URLS=http://*:5200" \
+    -e "ASPNETCORE_URLS=http://*:9999" \
     -e "ConnectionStrings__Rinha=Server=postgres-16;Port=5432;Database=rinha-de-backend-2024-q1;User Id=postgres;Password=123456;" \
     fabionaspolini/rinha-backend-2024-q1
 
