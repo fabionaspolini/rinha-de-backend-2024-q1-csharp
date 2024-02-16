@@ -23,6 +23,10 @@ var app = builder.Build();
 app.MapPost("/clientes/{id}/transacoes", HandlePostTransacoesAsync);
 app.MapGet("/clientes/{id}/extrato", HandleGetExtratoAsync);
 
+app.UseExceptionHandler(exceptionHandlerApp =>
+    exceptionHandlerApp.Run(async context => 
+        await Results.UnprocessableEntity().ExecuteAsync(context)));
+
 app.Run();
 
 async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
