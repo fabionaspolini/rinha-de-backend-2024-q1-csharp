@@ -5,7 +5,7 @@ public record class TransacaoPostResponse(int Limite, int Saldo);
 
 public record class SaldoExtratoModel(int Total, int Limite)
 {
-    public DateTime DataExtrato { get; } = DateTime.Now;
+    public DateTime DataExtrato { get; } = DateTime.UtcNow;
 };
 
 public record class TransacaoModel(int Valor, string Tipo, string Descricao, DateTime RealizadaEm);
