@@ -1,5 +1,3 @@
-ARG ASYNC_METHODS=true
-
 # Build project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 
@@ -12,6 +10,8 @@ COPY ./RinhaBackend-2024-q1-aot-dapper.csproj ./
 RUN dotnet restore -r linux-x64
 
 COPY . ./
+
+ARG ASYNC_METHODS=true
 RUN dotnet publish RinhaBackend-2024-q1-aot-dapper.csproj \
     -c Release \
     -r linux-x64 \
