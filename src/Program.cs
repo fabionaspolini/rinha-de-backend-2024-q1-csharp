@@ -3,7 +3,8 @@ using System.Text.Json.Serialization;
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
-using RinhaBackend_2024_q1.Models;
+using RinhaBackend_2024_q1.ApiModels;
+using RinhaBackend_2024_q1.Domain;
 
 [module: DapperAot]
 
@@ -31,7 +32,7 @@ async Task<IResult> HandlePostTransacoesAsync(HttpContext context, int id, [From
     if (!Constants.TiposTrasações.Contains(request.Tipo))
         return Results.UnprocessableEntity(new ErrorResponse("Tipo de transalção inválida."));
 
-    var result = await conn.CriarTransacaoAsync(id, request.Tipo, request.Valor, request.Descricao);
+    var result = await conn.InserirTransacaoAsync(id, request.Tipo, request.Valor, request.Descricao);
     return result.Code switch
     {
         CriarTransacaoResultCode.Ok => Results.Ok(new TransacaoPostResponse(result.Limite!.Value, result.Saldo!.Value)),
