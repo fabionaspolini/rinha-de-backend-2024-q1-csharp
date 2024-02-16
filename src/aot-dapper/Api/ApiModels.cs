@@ -1,4 +1,4 @@
-namespace RinhaBackend_2024_q1.ApiModels;
+namespace RinhaBackend_2024_q1_aot_dapper.Api;
 
 public record class TransacaoPostRequest(int Valor, string Tipo, string Descricao);
 public record class TransacaoPostResponse(int Limite, int Saldo);

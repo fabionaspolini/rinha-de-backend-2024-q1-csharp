@@ -1,4 +1,4 @@
-namespace RinhaBackend_2024_q1.Domain;
+namespace RinhaBackend_2024_q1_aot_dapper.Domain;
 
 public static class Constants
 {
