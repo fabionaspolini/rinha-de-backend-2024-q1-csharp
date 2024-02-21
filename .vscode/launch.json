@@ -2,17 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md.
-            "name": ".NET Core Launch (web)",
+            "name": "Debug",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/bin/Debug/net8.0/RinhaBackend-2024-q1.dll",
+            "preLaunchTask": "build-debug",
+            "program": "${workspaceFolder}/src/aot-dapper/bin/Debug/net8.0/RinhaBackend-2024-q1-aot-dapper.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src",
+            "cwd": "${workspaceFolder}/src/aot-dapper",
             "stopAtEntry": false,
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
@@ -22,9 +18,20 @@
             }
         },
         {
-            "name": ".NET Core Attach",
+            "name": "Release",
             "type": "coreclr",
-            "request": "attach"
+            "request": "launch",
+            "preLaunchTask": "build-release",
+            "program": "${workspaceFolder}/src/aot-dapper/bin/Release/net8.0/RinhaBackend-2024-q1-aot-dapper.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/aot-dapper",
+            "stopAtEntry": false,
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
         }
     ]
 }
