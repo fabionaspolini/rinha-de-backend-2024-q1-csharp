@@ -1,8 +1,10 @@
 namespace RinhaBackend_2024_q1_aot_dapper.Domain;
 
-public static class Constants
+public enum TipoTransacao
 {
-    public static readonly string[] TiposTrasacoes = ["c", "d"];
+    Invalida,
+    Credito = 'c',
+    Debito = 'd'
 }
 
 public enum CriarTransacaoResultCode

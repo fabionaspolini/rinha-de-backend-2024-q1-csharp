@@ -83,7 +83,6 @@ void PrintStartupInfo()
 [JsonSerializable(typeof(TransacaoPostRequest))]
 [JsonSerializable(typeof(TransacaoPostResponse))]
 [JsonSerializable(typeof(ExtratoResponse))]
-[JsonSerializable(typeof(ErrorResponse))]
 [JsonSerializable(typeof(ProblemDetails))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
