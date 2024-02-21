@@ -51,7 +51,11 @@ app.UseExceptionHandler(exceptionHandlerApp =>
 #endif
     }));
 
+#if ASYNC_METHODS
 await WarmUpAsync(app.Services);
+#else
+WarmUp(app.Services);
+#endif
 
 app.Run();
 
@@ -78,10 +82,11 @@ void PrintStartupInfo()
     Console.WriteLine("Rinha Backend 2024 Q1");
     Console.WriteLine($"Build configuration: {buildConfiguration}");
     Console.WriteLine($"Async Methods: {asyncMethods}");
-    Console.WriteLine($"Use ProblemDetails Exception Handler: {useProblemDetailsExceptionHandler}");
+    Console.WriteLine($"Use Problem Details Exception Handler: {useProblemDetailsExceptionHandler}");
     Console.WriteLine(new string('-', 60));
 }
 
+#if ASYNC_METHODS
 async Task WarmUpAsync(IServiceProvider services)
 {
     Console.WriteLine("Warming Up app");
@@ -129,6 +134,55 @@ async Task WarmUpAsync(IServiceProvider services)
     Console.WriteLine("Warn Up OK");
     Console.WriteLine(new string('-', 60));
 }
+#else
+async void WarmUp(IServiceProvider services)
+{
+    Console.WriteLine("Warming Up app");
+
+    var errorCount = 0;
+    var ok = false;
+    const int MaxRetry = 10;
+    while (!ok && errorCount < MaxRetry)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            using var conn = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            using var conn2 = scope.ServiceProvider.GetRequiredKeyedService<DbConnection>("conn2");
+            conn.Open();
+            conn2.Open();
+            using var trans = conn.BeginTransaction();
+            try
+            {
+                var saldo = conn.GetSaldoCliente(1);
+                var extrato = conn.GetExtrato(1);
+                var result1 = conn.InserirTransacaoCredito(1, 1, "teste");
+                var result2 = conn.InserirTransacaoDebito(2, 2, "teste");
+            }
+            finally
+            {
+                trans.Rollback();
+            }
+
+            var req = new TransacaoPostRequest(1, "c", "Teste");
+            var valida = req.IsValid();
+            ok = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error [{errorCount + 1}]: {ex.Message}");
+            Thread.Sleep(1000);
+            errorCount++;
+        }
+    }
+
+    if (errorCount == MaxRetry)
+        throw new Exception("Falha no Warm Up da aplicação, bye...");
+
+    Console.WriteLine("Warn Up OK");
+    Console.WriteLine(new string('-', 60));
+}
+#endif
 
 // Otimização para serializador JSON AOT
 [JsonSerializable(typeof(TransacaoPostRequest))]

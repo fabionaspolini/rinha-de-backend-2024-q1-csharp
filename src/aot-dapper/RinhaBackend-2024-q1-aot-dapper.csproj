@@ -20,7 +20,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Customizações injetas pelo build">
-    <AsyncMethods>true</AsyncMethods>
+    <AsyncMethods>false</AsyncMethods>
     <UseProblemDetailsExceptionHandler>true</UseProblemDetailsExceptionHandler>
   </PropertyGroup>
 

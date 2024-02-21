@@ -12,8 +12,8 @@ dotnet publish src/RinhaBackend-2024-q1.csproj -c Release -r linux-x64 -o out
 ## Docker build
 
 ```bash
-docker build --build-arg="ASYNC_METHODS=true" -t fabionaspolini/rinha-backend-2024-q1-aot-dapper:async .
-docker build --build-arg="ASYNC_METHODS=false" -t fabionaspolini/rinha-backend-2024-q1-aot-dapper:sync .
+docker build --build-arg="ASYNC_METHODS=true" -t fabionaspolini/rinha-backend-2024-q1-aot-dapper:async ./src/aot-dapper/
+docker build --build-arg="ASYNC_METHODS=false" -t fabionaspolini/rinha-backend-2024-q1-aot-dapper:sync ./src/aot-dapper/
 
 docker run --rm \
     --name rinha \
@@ -21,7 +21,7 @@ docker run --rm \
     -p 9999:9999 \
     -e "ASPNETCORE_URLS=http://*:9999" \
     -e "ConnectionStrings__Rinha=Server=postgres-16;Port=5432;Database=rinha-de-backend-2024-q1;User Id=postgres;Password=123456;" \
-    fabionaspolini/rinha-backend-2024-q1-aot-dapper:async
+    fabionaspolini/rinha-backend-2024-q1-aot-dapper:sync
 
 docker push fabionaspolini/rinha-backend-2024-q1-aot-dapper --all-tags
 

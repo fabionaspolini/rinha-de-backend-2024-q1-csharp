@@ -34,11 +34,18 @@ public static class DatabaseFunctions
             descricao
         });
 #else
-    public static CriarTransacaoResult InserirTransacao(this DbConnection conn, int clienteId, string tipo, int valor, string descricao) =>
-        conn.QueryFirst<CriarTransacaoResult>(InserirTransacaoSql, new
+    public static CriarTransacaoResult InserirTransacaoCredito(this DbConnection conn, int clienteId, int valor, string descricao) =>
+        conn.QueryFirst<CriarTransacaoResult>(InserirTransacaoCreditoSql, new
         {
             cliente_id = clienteId,
-            tipo,
+            valor,
+            descricao
+        });
+
+    public static CriarTransacaoResult InserirTransacaoDebito(this DbConnection conn, int clienteId, int valor, string descricao) =>
+        conn.QueryFirst<CriarTransacaoResult>(InserirTransacaoDebitoSql, new
+        {
+            cliente_id = clienteId,
             valor,
             descricao
         });
