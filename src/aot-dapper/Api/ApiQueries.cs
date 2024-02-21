@@ -6,20 +6,20 @@ namespace RinhaBackend_2024_q1_aot_dapper.Api;
 public static class ApiQueries
 {
     private const string SaldoClienteSql =
-    """
+        """
         select saldo as total, limite
         from cliente
         where id = @id
-    """;
+        """;
 
     private const string ExtratoSql =
-    """
+        """
         select t.valor, t.tipo, t.descricao, t.realizada_em
         from transacao t
         where t.cliente_id = @cliente_id
         order by t.realizada_em desc
         limit 10
-    """;
+        """;
 
 #if ASYNC_METHODS
     public static Task<SaldoExtratoModel?> GetSaldoClienteAsync(this DbConnection conn, int clienteId)

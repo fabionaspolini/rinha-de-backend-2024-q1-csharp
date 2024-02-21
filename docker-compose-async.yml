@@ -65,7 +65,7 @@ services:
       resources:
         limits:
           cpus: "0.7"
-          memory: "370MB"
+          memory: "380MB"
 
 # O uso do modo `bridge` deve ser adequado à carga que será usada no teste.
 # A edição anterior se beneficiou do modo host pois o volume de requisições

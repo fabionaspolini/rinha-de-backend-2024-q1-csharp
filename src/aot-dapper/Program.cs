@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RinhaBackend_2024_q1_aot_dapper.Api;
+using RinhaBackend_2024_q1_aot_dapper.Domain;
 
 [module: DapperAot]
 
@@ -27,14 +28,14 @@ builder.Services.AddProblemDetails();
 builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true); // Para executar exeption handler em ambiente produtivo
 #endif
 
-#if !DEBUG
+#if RELEASE
 builder.Logging.ClearProviders();
 #endif
 
 var app = builder.Build();
 
-app.MapPost("/clientes/{id}/transacoes", ApiHandler.HandlePostTransacoes);
-app.MapGet("/clientes/{id}/extrato", ApiHandler.HandleGetExtrato);
+app.MapPost("/clientes/{id}/transacoes", ApiHandler.PostTransacoes);
+app.MapGet("/clientes/{id}/extrato", ApiHandler.GetExtrato);
 app.MapGet("/exception", context => throw new Exception("Teste exception."));
 
 app.UseExceptionHandler(exceptionHandlerApp =>
@@ -49,6 +50,8 @@ app.UseExceptionHandler(exceptionHandlerApp =>
         await Results.UnprocessableEntity().ExecuteAsync(context);
 #endif
     }));
+
+await WarmUpAsync(app.Services);
 
 app.Run();
 
@@ -76,6 +79,54 @@ void PrintStartupInfo()
     Console.WriteLine($"Build configuration: {buildConfiguration}");
     Console.WriteLine($"Async Methods: {asyncMethods}");
     Console.WriteLine($"Use ProblemDetails Exception Handler: {useProblemDetailsExceptionHandler}");
+    Console.WriteLine(new string('-', 60));
+}
+
+async Task WarmUpAsync(IServiceProvider services)
+{
+    Console.WriteLine("Warming Up app");
+
+    var errorCount = 0;
+    var ok = false;
+    const int MaxRetry = 10;
+    while (!ok && errorCount < MaxRetry)
+    {
+        try
+        {
+            using var scope = services.CreateScope();
+            using var conn = scope.ServiceProvider.GetRequiredService<DbConnection>();
+            using var conn2 = scope.ServiceProvider.GetRequiredKeyedService<DbConnection>("conn2");
+            await conn.OpenAsync();
+            await conn2.OpenAsync();
+            using var trans = await conn.BeginTransactionAsync();
+            try
+            {
+                var saldo = await conn.GetSaldoClienteAsync(1);
+                var extrato = await conn.GetExtratoAsync(1);
+                var result1 = await conn.InserirTransacaoCreditoAsync(1, 1, "teste");
+                var result2 = await conn.InserirTransacaoDebitoAsync(2, 2, "teste");
+            }
+            finally
+            {
+                await trans.RollbackAsync();
+            }
+
+            var req = new TransacaoPostRequest(1, "c", "Teste");
+            var valida = req.IsValid();
+            ok = true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error [{errorCount + 1}]: {ex.Message}");
+            await Task.Delay(1000);
+            errorCount++;
+        }
+    }
+
+    if (errorCount == MaxRetry)
+        throw new Exception("Falha no Warm Up da aplicação, bye...");
+
+    Console.WriteLine("Warn Up OK");
     Console.WriteLine(new string('-', 60));
 }
 

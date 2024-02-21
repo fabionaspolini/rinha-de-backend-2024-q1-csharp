@@ -7,7 +7,7 @@ namespace RinhaBackend_2024_q1_aot_dapper.Api;
 
 public static class ApiHandler
 {
-    public static IResult HandlePostTransacoes(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
+    public static IResult PostTransacoes(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
     {
         if (string.IsNullOrEmpty(request.Descricao) || request.Descricao.Length > 10)
             return Results.UnprocessableEntity(new ErrorResponse("Descrição deve ter entre 1 e 10 caracteres."));
@@ -25,7 +25,7 @@ public static class ApiHandler
         };
     }
 
-    public static IResult HandleGetExtrato(HttpContext context, int id,
+    public static IResult GetExtrato(HttpContext context, int id,
         [FromServices] DbConnection conn)
     {
         var saldoAtual = conn.GetSaldoCliente(id);

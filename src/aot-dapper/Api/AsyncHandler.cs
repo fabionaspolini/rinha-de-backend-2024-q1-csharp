@@ -1,6 +1,5 @@
 ﻿#if ASYNC_METHODS
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using RinhaBackend_2024_q1_aot_dapper.Domain;
 using System.Data.Common;
 
@@ -8,7 +7,7 @@ namespace RinhaBackend_2024_q1_aot_dapper.Api;
 
 public static class ApiHandler
 {
-    public static async Task<IResult> HandlePostTransacoes(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
+    public static async Task<IResult> PostTransacoes(HttpContext context, int id, [FromBody] TransacaoPostRequest request, [FromServices] DbConnection conn)
     {
         var validacao = request.IsValid();
         if (!validacao.Valid)
@@ -25,12 +24,12 @@ public static class ApiHandler
         };
     }
 
-    public static async Task<IResult> HandleGetExtrato(HttpContext context, int id,
+    public static async Task<IResult> GetExtrato(HttpContext context, int id,
         [FromServices] DbConnection conn,
         [FromKeyedServices("conn2")] DbConnection conn2)
     {
-        var saldoAtualTask = conn.GetSaldoClienteAsync(id);
         var extratoTask = conn2.GetExtratoAsync(id);
+        var saldoAtualTask = conn.GetSaldoClienteAsync(id);
 
         var saldoAtual = await saldoAtualTask;
         if (saldoAtual == null)
