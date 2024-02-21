@@ -8,13 +8,7 @@ using RinhaBackend_2024_q1_aot_dapper.Api;
 
 [module: DapperAot]
 
-Console.WriteLine("Rinha Backend 2024 Q1");
-#if ASYNC_METHODS
-Console.WriteLine("Using ASYNC methods");
-#else
-Console.WriteLine("Using SYNC methods");
-#endif
-Console.WriteLine(new string('-', 60));
+PrintStartupInfo();
 
 var builder = WebApplication.CreateSlimBuilder(args);
 var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:Rinha");
@@ -30,6 +24,9 @@ builder.Services.AddKeyedScoped<DbConnection>("conn2", (services, key) => new Np
 builder.Services.AddProblemDetails();
 builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true); // Para executar exeption handler em ambiente produtivo
 
+#if !DEBUG
+builder.Logging.ClearProviders();
+#endif
 
 var app = builder.Build();
 
@@ -51,6 +48,26 @@ app.UseExceptionHandler(exceptionHandlerApp =>
     }));
 
 app.Run();
+
+void PrintStartupInfo()
+{
+#if ASYNC_METHODS
+    const bool asyncMethods = true;
+#else
+    const bool asyncMethods = false;
+#endif
+
+#if DEBUG
+    const string buildConfiguration = "Debug";
+#else
+    const string buildConfiguration = "Release";
+#endif
+
+    Console.WriteLine("Rinha Backend 2024 Q1");
+    Console.WriteLine($"Using {(asyncMethods ? "ASYNC" : "SYNC")} methods");
+    Console.WriteLine($"Build configuration: {buildConfiguration.ToUpper()}");
+    Console.WriteLine(new string('-', 60));
+}
 
 // Otimização para serializador JSON AOT
 [JsonSerializable(typeof(TransacaoPostRequest))]
