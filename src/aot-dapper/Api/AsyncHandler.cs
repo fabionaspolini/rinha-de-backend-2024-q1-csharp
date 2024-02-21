@@ -16,7 +16,9 @@ public static class ApiHandler
         if (!int.TryParse(request.Valor?.ToString(), out var valorInt))
             return Results.Problem(statusCode: 422, title: "Valor deve ser um inteiro válido.");
 
-        var result = await conn.InserirTransacaoAsync(id, request.Tipo, valorInt, request.Descricao);
+        var result = request.Tipo == "c"
+            ? await conn.InserirTransacaoCreditoAsync(id, valorInt, request.Descricao)
+            : await conn.InserirTransacaoDebitoAsync(id, valorInt, request.Descricao);
         return result.Code switch
         {
             CriarTransacaoResultCode.Ok => Results.Ok(new TransacaoPostResponse(result.Limite!.Value, result.Saldo!.Value)),
