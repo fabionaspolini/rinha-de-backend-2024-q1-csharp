@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Dapper;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using RinhaBackend_2024_q1_aot_dapper.Api;
 
@@ -21,8 +22,10 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.AddScoped<DbConnection>(services => new NpgsqlConnection(connectionString));
 builder.Services.AddKeyedScoped<DbConnection>("conn2", (services, key) => new NpgsqlConnection(connectionString));
 
+#if USE_PROBLEM_DETAILS_EXCEPTION_HANDLER
 builder.Services.AddProblemDetails();
 builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true); // Para executar exeption handler em ambiente produtivo
+#endif
 
 #if !DEBUG
 builder.Logging.ClearProviders();
@@ -37,7 +40,7 @@ app.MapGet("/exception", context => throw new Exception("Teste exception."));
 app.UseExceptionHandler(exceptionHandlerApp =>
     exceptionHandlerApp.Run(async context =>
     {
-#if DEBUG
+#if USE_PROBLEM_DETAILS_EXCEPTION_HANDLER
         var exception = context.Features.Get<IExceptionHandlerFeature>();
         var title = exception?.Error.Message;
         var details = exception?.Error.ToString();
@@ -74,6 +77,7 @@ void PrintStartupInfo()
 [JsonSerializable(typeof(TransacaoPostResponse))]
 [JsonSerializable(typeof(ExtratoResponse))]
 [JsonSerializable(typeof(ErrorResponse))]
+[JsonSerializable(typeof(ProblemDetails))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext
 {
 }

@@ -13,8 +13,10 @@ public static class ApiHandler
             return Results.UnprocessableEntity(new ErrorResponse("Descrição deve ter entre 1 e 10 caracteres."));
         if (!Constants.TiposTrasacoes.Contains(request.Tipo))
             return Results.UnprocessableEntity(new ErrorResponse("Tipo de transação inválida."));
+        if (!int.TryParse(request.Valor?.ToString(), out var valorInt))
+            return Results.Problem(statusCode: 422, title: "Valor deve ser um inteiro válido.");
 
-        var result = await conn.InserirTransacaoAsync(id, request.Tipo, request.Valor, request.Descricao);
+        var result = await conn.InserirTransacaoAsync(id, request.Tipo, valorInt, request.Descricao);
         return result.Code switch
         {
             CriarTransacaoResultCode.Ok => Results.Ok(new TransacaoPostResponse(result.Limite!.Value, result.Saldo!.Value)),

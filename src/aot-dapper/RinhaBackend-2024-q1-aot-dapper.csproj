@@ -8,7 +8,7 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <PublishAot>true</PublishAot>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="Dapper.AOT" Version="1.0.31" />
@@ -21,10 +21,15 @@
 
   <PropertyGroup Label="Customizações injetas pelo build">
     <AsyncMethods>true</AsyncMethods>
+    <UseProblemDetailsExceptionHandler>true</UseProblemDetailsExceptionHandler>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(AsyncMethods)' == 'true'" Label="Utilizar comportamento async/await">
     <DefineConstants>$(DefineConstants);ASYNC_METHODS</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(UseProblemDetailsExceptionHandler)' == 'true'" Label="Utilizar pattern problem detail para resultado de exceptions">
+    <DefineConstants>$(DefineConstants);USE_PROBLEM_DETAILS_EXCEPTION_HANDLER</DefineConstants>
   </PropertyGroup>
 
 </Project>
