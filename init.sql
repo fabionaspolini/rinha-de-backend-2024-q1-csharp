@@ -45,12 +45,6 @@ declare
 	cli cliente%rowtype;
 	result inserir_transacao_result;
 begin
-	select * from cliente where id = cliente_id into cli;
-	if not found then
-		select 1, 'Cliente inválido.', null, null into result;
-		return result;
-	end if;
-
 	if (tipo = 'd') then
 		/* Se for débito, valida estouro de limite*/
 		update cliente
@@ -61,6 +55,11 @@ begin
 	   	into cli;
 	   
 		if not found then
+            if not exists(select 1 from cliente where id = cliente_id) then
+                select 1, 'Cliente inválido.', null, null into result;
+                return result;
+            end if;
+        
 			select 2, 'Saldo e limite insuficiente para executar a operação.', null, null into result;
 			return result;
 		end if;
@@ -71,6 +70,11 @@ begin
 		where id = cliente_id
 	    returning *
 	   	into cli;
+        
+        if not found then
+            select 1, 'Cliente inválido.', null, null into result;
+            return result;
+        end if;
 	end if;
 
 	insert into transacao(cliente_id, tipo, valor, realizada_em, descricao)

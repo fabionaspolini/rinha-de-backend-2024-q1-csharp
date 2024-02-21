@@ -54,21 +54,28 @@ app.Run();
 
 void PrintStartupInfo()
 {
-#if ASYNC_METHODS
-    const bool asyncMethods = true;
-#else
-    const bool asyncMethods = false;
-#endif
-
 #if DEBUG
     const string buildConfiguration = "Debug";
 #else
     const string buildConfiguration = "Release";
 #endif
 
+#if ASYNC_METHODS
+    const bool asyncMethods = true;
+#else
+    const bool asyncMethods = false;
+#endif
+
+#if USE_PROBLEM_DETAILS_EXCEPTION_HANDLER
+    const bool useProblemDetailsExceptionHandler = true;
+#else
+    const bool useProblemDetailsExceptionHandler = false;
+#endif
+
     Console.WriteLine("Rinha Backend 2024 Q1");
-    Console.WriteLine($"Using {(asyncMethods ? "ASYNC" : "SYNC")} methods");
     Console.WriteLine($"Build configuration: {buildConfiguration.ToUpper()}");
+    Console.WriteLine($"Using {(asyncMethods ? "ASYNC" : "SYNC")} methods");
+    Console.WriteLine($"UseProblemDetailsExceptionHandler: {useProblemDetailsExceptionHandler}");
     Console.WriteLine(new string('-', 60));
 }
 

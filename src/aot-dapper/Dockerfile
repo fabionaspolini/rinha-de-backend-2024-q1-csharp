@@ -17,7 +17,8 @@ RUN dotnet publish RinhaBackend-2024-q1-aot-dapper.csproj \
     -r linux-x64 \
     -o out \
     --no-restore \
-    -p AsyncMethods=${ASYNC_METHODS}
+    -p AsyncMethods=${ASYNC_METHODS} \
+    -p UseProblemDetailsExceptionHandler=false
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0
