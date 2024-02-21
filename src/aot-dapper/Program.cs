@@ -73,9 +73,9 @@ void PrintStartupInfo()
 #endif
 
     Console.WriteLine("Rinha Backend 2024 Q1");
-    Console.WriteLine($"Build configuration: {buildConfiguration.ToUpper()}");
-    Console.WriteLine($"Using {(asyncMethods ? "ASYNC" : "SYNC")} methods");
-    Console.WriteLine($"UseProblemDetailsExceptionHandler: {useProblemDetailsExceptionHandler}");
+    Console.WriteLine($"Build configuration: {buildConfiguration}");
+    Console.WriteLine($"Async Methods: {asyncMethods}");
+    Console.WriteLine($"Use ProblemDetails Exception Handler: {useProblemDetailsExceptionHandler}");
     Console.WriteLine(new string('-', 60));
 }
 
